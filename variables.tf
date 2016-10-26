@@ -15,3 +15,7 @@ variable "key_path" {
     default = "certs/tf.pem"
 
 }
+
+variable "nodes_count" {
+    default = "3"
+}

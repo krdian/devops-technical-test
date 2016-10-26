@@ -48,7 +48,7 @@ resource "aws_instance" "es_node" {
     	private_key = "${file("${var.key_path}")}"
     }
 
-    count = 3
+    count = "${var.nodes_count}"
 
 }
 
