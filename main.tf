@@ -139,6 +139,22 @@ resource "aws_subnet" "default" {
   map_public_ip_on_launch = true
 }
 
+# Load Balancer
+resource "aws_elb" "elasticsearch" {
+  name = "test-es"
+
+  subnets         = ["${aws_subnet.default.id}"]
+  security_groups = ["${aws_security_group.default.id}"]
+  instances       = ["${aws_instance.es_node_01.id}","${aws_instance.es_node_02.id}","${aws_instance.es_node_03.id}"]
+
+  listener {
+    instance_port     = 9200
+    instance_protocol = "http"
+    lb_port           = 9200
+    lb_protocol       = "http"
+  }
+}
+
 
 # Acces to  port 9200 from an internal network
 resource "aws_security_group" "default" {
