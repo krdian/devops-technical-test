@@ -144,7 +144,7 @@ resource "aws_elb" "elasticsearch" {
   name = "test-es"
 
   subnets         = ["${aws_subnet.default.id}"]
-  security_groups = ["${aws_security_group.default.id}"]
+  security_groups = ["${aws_security_group.elb.id}"]
   instances       = ["${aws_instance.es_node_01.id}","${aws_instance.es_node_02.id}","${aws_instance.es_node_03.id}"]
 
   listener {
@@ -173,6 +173,25 @@ resource "aws_security_group" "default" {
     to_port     = 9200
     protocol    = "tcp"
     cidr_blocks = ["10.0.1.0/24"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "elb" {
+  name        = "elb_sg-test"
+  vpc_id      = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port   = 9200
+    to_port     = 9200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
