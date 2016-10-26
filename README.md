@@ -12,3 +12,11 @@ We are testing your ability to implement modern automated infrastructure, as wel
 
 ## Submit your solution
 Create a public Github repository and push your solution in it. Commit often - we would rather see a history of trial and error than a single monolithic push. When you're finished, send us the URL to the repository.
+
+## KR_Notes
+I've used terraform to provision EC2 instances and ELB. Is still some improvement to do as such access policy for cluster instances (based on IAM for example), some variables are hardcoded and so on.
+There is anoter approach as well, by using ElasticSearch from AWS. I have creted template for this schema, but haven't added it to the repo as a subject was three separate nodes.
+
+Thanks 
+
+Konrad  
