@@ -53,6 +53,72 @@ resource "aws_instance" "es_node_01" {
 
 }
 
+resource "aws_instance" "es_node_02" {
+    ami = "${data.aws_ami.ubuntu.id}"
+    instance_type = "t2.micro"
+    tags {
+        Name = "ElasticSearchNode02"
+    }
+    subnet_id = "${aws_subnet.default.id}"
+    key_name = "${aws_key_pair.auth.id}"
+
+    vpc_security_group_ids = ["${aws_security_group.default.id}"]
+
+    provisioner "remote-exec" {
+        inline = [
+                "sudo apt-get -y update",
+                "sudo apt-get -y install nginx",
+                "sudo service nginx start",
+                "sudo apt-get -y install openjdk-7-jre",
+                "wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.deb",
+                "sudo dpkg -i elasticsearch-1.7.2.deb",
+                "sudo update-rc.d elasticsearch defaults",
+                "sudo service elasticsearch start"
+        ]
+
+    }
+         connection {
+    user = "ubuntu"
+
+    #agent = true
+    type = "ssh"
+    private_key = "${file("${var.key_path}")}"
+  }
+}
+
+resource "aws_instance" "es_node_02" {
+    ami = "${data.aws_ami.ubuntu.id}"
+    instance_type = "t2.micro"
+    tags {
+        Name = "ElasticSearchNode03"
+    }
+    subnet_id = "${aws_subnet.default.id}"
+    key_name = "${aws_key_pair.auth.id}"
+
+    vpc_security_group_ids = ["${aws_security_group.default.id}"]
+
+    provisioner "remote-exec" {
+        inline = [
+                "sudo apt-get -y update",
+                "sudo apt-get -y install nginx",
+                "sudo service nginx start",
+                "sudo apt-get -y install openjdk-7-jre",
+                "wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.deb",
+                "sudo dpkg -i elasticsearch-1.7.2.deb",
+                "sudo update-rc.d elasticsearch defaults",
+                "sudo service elasticsearch start"
+        ]
+
+    }
+         connection {
+    user = "ubuntu"
+
+    #agent = true
+    type = "ssh"
+    private_key = "${file("${var.key_path}")}"
+  }
+}
+
 
 # Acces to  port 9200 from an internal network
 resource "aws_security_group" "default" {
