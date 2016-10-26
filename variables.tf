@@ -1,5 +1,5 @@
 variable "aws_region" {
-        default = "certs/us-west-2"
+        default = "us-west-2"
 }
 
 variable "public_key_path" {
@@ -14,3 +14,4 @@ variable "key_name" {
 variable "key_path" {
     default = "certs/tf.pem"
 
+}

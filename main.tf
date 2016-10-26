@@ -46,9 +46,9 @@ resource "aws_instance" "es_node" {
 
     	type = "ssh"
     	private_key = "${file("${var.key_path}")}"
-  }
+    }
 
-  count = 3
+    count = 3
 
 }
 
@@ -78,7 +78,7 @@ resource "aws_elb" "elasticsearch" {
 
   subnets         = ["${aws_subnet.default.id}"]
   security_groups = ["${aws_security_group.elb.id}"]
-  instances       = ["${aws_instance.es_node_*.id}"]
+  instances       = ["${aws_instance.es_node.*.id}"]
 
   listener {
     instance_port     = 9200
