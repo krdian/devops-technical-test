@@ -16,7 +16,7 @@ resource "aws_key_pair" "auth" {
 
 }
 
-resource "aws_instance" "es_node_01" {
+resource "aws_instance" "es_node" {
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "t2.micro"
     tags {
@@ -44,79 +44,12 @@ resource "aws_instance" "es_node_01" {
     connection {
     	user = "ubuntu"
 
-    	#agent = true
     	type = "ssh"
-    	#key_file = "${var.key_path}"
-    	#private_key = "${var.key_path}"
     	private_key = "${file("${var.key_path}")}"
   }
 
-}
+  count = 3
 
-resource "aws_instance" "es_node_02" {
-    ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
-    tags {
-        Name = "ElasticSearchNode02"
-    }
-    subnet_id = "${aws_subnet.default.id}"
-    key_name = "${aws_key_pair.auth.id}"
-
-    vpc_security_group_ids = ["${aws_security_group.default.id}"]
-
-    provisioner "remote-exec" {
-        inline = [
-                "sudo apt-get -y update",
-                "sudo apt-get -y install nginx",
-                "sudo service nginx start",
-                "sudo apt-get -y install openjdk-7-jre",
-                "wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.deb",
-                "sudo dpkg -i elasticsearch-1.7.2.deb",
-                "sudo update-rc.d elasticsearch defaults",
-                "sudo service elasticsearch start"
-        ]
-
-    }
-         connection {
-    user = "ubuntu"
-
-    #agent = true
-    type = "ssh"
-    private_key = "${file("${var.key_path}")}"
-  }
-}
-
-resource "aws_instance" "es_node_02" {
-    ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
-    tags {
-        Name = "ElasticSearchNode03"
-    }
-    subnet_id = "${aws_subnet.default.id}"
-    key_name = "${aws_key_pair.auth.id}"
-
-    vpc_security_group_ids = ["${aws_security_group.default.id}"]
-
-    provisioner "remote-exec" {
-        inline = [
-                "sudo apt-get -y update",
-                "sudo apt-get -y install nginx",
-                "sudo service nginx start",
-                "sudo apt-get -y install openjdk-7-jre",
-                "wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.deb",
-                "sudo dpkg -i elasticsearch-1.7.2.deb",
-                "sudo update-rc.d elasticsearch defaults",
-                "sudo service elasticsearch start"
-        ]
-
-    }
-         connection {
-    user = "ubuntu"
-
-    #agent = true
-    type = "ssh"
-    private_key = "${file("${var.key_path}")}"
-  }
 }
 
 resource "aws_vpc" "default" {
@@ -145,7 +78,7 @@ resource "aws_elb" "elasticsearch" {
 
   subnets         = ["${aws_subnet.default.id}"]
   security_groups = ["${aws_security_group.elb.id}"]
-  instances       = ["${aws_instance.es_node_01.id}","${aws_instance.es_node_02.id}","${aws_instance.es_node_03.id}"]
+  instances       = ["${aws_instance.es_node_*.id}"]
 
   listener {
     instance_port     = 9200
